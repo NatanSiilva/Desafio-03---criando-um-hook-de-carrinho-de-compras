@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { MdAddShoppingCart } from "react-icons/md";
 
 import { ProductList } from "./styles";
@@ -23,24 +23,24 @@ interface CartItemsAmount {
 
 const Home = (): JSX.Element => {
   const [products, setProducts] = useState<ProductFormatted[]>([]);
-  const { addProduct, cart } = useCart();
+   const { addProduct, cart } = useCart();
 
+   // atualiza a quantidade do carrionho
   const cartItemsAmount = cart.reduce((sumAmount, product) => {
-    const newSumAmount = { ...sumAmount };
-    newSumAmount[product.id] = product.amount;
-    return newSumAmount;
-  }, {} as CartItemsAmount);
+    sumAmount[product.id] = product.amount
+    return sumAmount;
+  }, {} as CartItemsAmount)
 
   useEffect(() => {
     async function loadProducts() {
-      const response = await api.get<Product[]>("products");
+      const response = await api.get("/products");
 
-      const data = response.data.map((product) => ({
+      const priceFormatted = response.data.map((product: Product) => ({
         ...product,
-        priceFormatted: formatPrice(product.price),
+        price: formatPrice(product.price),
       }));
 
-      setProducts(data);
+      setProducts(priceFormatted);
     }
 
     loadProducts();
@@ -54,16 +54,13 @@ const Home = (): JSX.Element => {
     <ProductList>
       {products.map((product) => (
         <li key={product.id}>
-          <img
-            src={product.image}
-            alt={product.title}
-          />
+          <img src={product.image} alt={product.title} />
           <strong>{product.title}</strong>
-          <span>{product.priceFormatted}</span>
+          <span>{product.price}</span>
           <button
             type="button"
             data-testid="add-product-button"
-            onClick={() => handleAddProduct(product.id)}
+           onClick={() => handleAddProduct(product.id)}
           >
             <div data-testid="cart-product-quantity">
               <MdAddShoppingCart size={16} color="#FFF" />
